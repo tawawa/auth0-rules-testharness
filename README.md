@@ -49,8 +49,7 @@ It is referenced in Step 2.
 'use strict';
 
 var expect = require('chai').expect;
-
-var runInSandbox = require("./index");
+var runInSandbox = require("auth0-rules-testharness");
 
 var user = {
   "email": "richard.seldon@auth0.com",
