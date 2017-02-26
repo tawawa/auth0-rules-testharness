@@ -1,6 +1,6 @@
 {
   "name": "auth0-rules-testharness",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "deploy, execute, and test the output of Auth0 Rules using a webtask sandbox environment.",
   "author": "Richard Seldon<arcseldon@gmail.com>",
   "main": "./index.js",
