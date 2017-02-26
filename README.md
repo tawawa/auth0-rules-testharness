@@ -3,17 +3,16 @@
 The *auth0-rules-testharness* library provides an easy way to deploy, execute, and test the output of Auth0 Rules using a real
 webtask sandbox environment. It is very simple to use, and requires under 5 minutes to get started testing your Auth0 Rules! 
 
+For see here for further documentation on [Auth0 Rules](https://auth0.com/docs/rules)
+
 Depending on your needs there are several pragmatic ways to test Rules without resorting to actually deploying and executing
-them in a webtask sandbox environment. One simple solution is to use the [webtask runtime](https://github.com/auth0/webtask-runtime).
+them in a webtask sandbox environment. One solution is to use the [webtask runtime](https://github.com/auth0/webtask-runtime).
 Doing this offers a series of components that replicate the behaviour of the runtime component of https://webtask.io.
 
 However, sometimes you just want to execute your Rule against the same sandbox environment it will be deployed to at Runtime in
-Auth0, and test everything works as expected - this where this npm module can help. It actually takes your Rule script, and any
-`user`, `context` and `callback` you give it, then spins up a webtask, executes your Rule passing the results to the provided callback, and finally tears the environment down again.
+Auth0, and test everything works as expected. You may also wish to write your Rules using a test driven development approach, and gain real feedback as you code - this is where this npm module can help.  It actually takes your Rule script, and any `user`, `context` and `callback` you give it, then spins up a webtask, executes your Rule passing the results to the provided callback, and finally tears the environment down again.
 
-It is worth noting that under the covers, the script this npm module generates for deployment to a webtask environment
-depends upon [auth0-authz-rules-api](https://github.com/auth0/auth0-authz-rules-api). If you wish to study and understand
-the generated script code that wraps the Rule being tested, then this is the place to look ;)
+It is worth noting that under the covers, the script this npm module generates for deployment to a webtask environment depends upon [auth0-authz-rules-api](https://github.com/auth0/auth0-authz-rules-api). If you wish to study and understand the generated script code that wraps the Rule being tested, then this is the place to look ;)
 
 ## Prerequisites 
 
