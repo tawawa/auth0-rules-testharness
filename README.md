@@ -153,7 +153,9 @@ That is it! You should be up and running in under 5 minutes with an easy way to 
 
 ## Special Warning
 
-It is possible that if one Rule fails due to malformed Script content, it could bring down the Webtask Container for a short period of time, affecting any other webtasks deployed in the same container. For this reason, usage of this library against a PRODUCTION webtask environment is strongly discouraged. Please note this is not a limitation of this library, but rather do with the behaviour of webtasks themselves - this is identical behaviour to writing a malformed Rule in the Auth0 Dashboard and executing it with an authentication request. Please see here for more information on [webtasks](https://webtask.io/), the underlying technology that Auth0 Rules are based upon.
+It is possible that if one Rule fails due to malformed Script content, it could bring down the Webtask Container for a short period of time, affecting any other webtasks deployed in the same container. For this reason, usage of this library against a PRODUCTION webtask environment is strongly discouraged. 
+
+Please note this is not a limitation of this library, but rather do with the behaviour of webtasks themselves - this is identical behaviour to writing a malformed Rule in the Auth0 Dashboard and executing it with an authentication request. Please see here for more information on [webtasks](https://webtask.io/), the underlying technology that Auth0 Rules are based upon.
 
 ## What is Auth0?
 
