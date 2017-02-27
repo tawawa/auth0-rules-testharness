@@ -3,6 +3,8 @@
 The *auth0-rules-testharness* library provides an easy way to deploy, execute, and test the output of Auth0 Rules using a real
 webtask sandbox environment. It is very simple to use, and requires under 5 minutes to get started testing your Auth0 Rules! 
 
+This README offers fully instructions. However, for an easy to understand seed project that helps users get started immediately, please see [auth0-rules-testharness-sample](https://github.com/tawawa/auth0-rules-testharness-sample).
+
 See here for further documentation on [Auth0 Rules](https://auth0.com/docs/rules).
 
 Depending on your needs there are several pragmatic ways to test Rules without resorting to actually deploying and executing
