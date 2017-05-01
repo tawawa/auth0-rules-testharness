@@ -53,71 +53,88 @@ function runInSandbox(script, args, configuration, params) {
 
     request(options, function (err, res, body) {
 
-      if (err) {
-        if (typeof err === 'object' && (err.code === 'ETIMEDOUT' || err.code === 'ESOCKETTIMEDOUT')) {
-          return callback(new Error(params.timeout));
-        }
-        return callback(err);
-      }
-
-      if (res.statusCode === 429) {
-        var backoff = (+res.headers['retry-after'] || 5) * 1000;
-        backoff += Math.floor(Math.random() * backoff);
-        winston.debug('scheduling retry of auth0-sandbox request', {
-          backoff: backoff
-        });
-        setTimeout(run_once, backoff);
-        return;
-      }
-
-      if (res.statusCode !== 200 && res.statusCode !== 500) {
-
-        var errorMessage = 'Invalid response code from the auth0-sandbox: HTTP ' + res.statusCode + '.';
-        var parsedBody = toJSON(body);
-
-        if (parsedBody && parsedBody.error) {
-          // Special error case: Script Error like a syntax error. The response has a status code of 500.
-          errorMessage += ' ' + parsedBody.error;
-
-          console.log('ADJUSTED ERROR MESSAGE', errorMessage);
-
-          if (parsedBody.details) {
-            errorMessage += ' ' + parsedBody.details;
+        if (err) {
+          if (typeof err === 'object' && (err.code === 'ETIMEDOUT' || err.code === 'ESOCKETTIMEDOUT')) {
+            return callback(new Error(params.timeout));
           }
-          return callback(new Error(errorMessage), undefined, parsedBody.stdout);
-        } else {
-          return callback(new Error(errorMessage), undefined, [body], null);
+          return callback(err);
+        }
+
+        // Handle scenario when there are too many requests.  Retry once according to the requested backoff period.
+        if (res.statusCode === 429) {
+          var backoff = (+res.headers['retry-after'] || 5) * 1000;
+          backoff += Math.floor(Math.random() * backoff);
+          winston.debug('scheduling retry of auth0-sandbox request', {
+            backoff: backoff
+          });
+          var run_once = function () {
+            request(options, function (err, res, body) {
+              if (err) {
+                if (typeof err === 'object' && (err.code === 'ETIMEDOUT' || err.code === 'ESOCKETTIMEDOUT')) {
+                  return callback(new Error(params.timeout));
+                }
+                return callback(err);
+              }
+              return process_result(res, body)
+            })
+          };
+          setTimeout(run_once, backoff);
+          return;
+        }
+
+        return process_result(res, body);
+
+        function process_result(res, body) {
+          if (res.statusCode !== 200 && res.statusCode !== 500) {
+
+            var errorMessage = 'Invalid response code from the auth0-sandbox: HTTP ' + res.statusCode + '.';
+            var parsedBody = toJSON(body);
+
+            if (parsedBody && parsedBody.error) {
+              // Special error case: Script Error like a syntax error. The response has a status code of 500.
+              errorMessage += ' ' + parsedBody.error;
+
+              console.log('ADJUSTED ERROR MESSAGE', errorMessage);
+
+              if (parsedBody.details) {
+                errorMessage += ' ' + parsedBody.details;
+              }
+              return callback(new Error(errorMessage), undefined, parsedBody.stdout);
+            } else {
+              return callback(new Error(errorMessage), undefined, [body], null);
+            }
+          }
+
+          var json = toJSON(body);
+          if (!json || typeof json !== 'object') {
+            return callback(new Error('Invalid response content from the auth0-sandbox: ' + body), undefined, [body], null);
+          }
+
+          if (json.message === 'Blocked event loop.') {
+            var timeout_error = new Error(params.timeout, undefined, json.stdout, null);
+            timeout_error.stack = json.stack;
+            return callback(timeout_error, undefined, json.stdout, null);
+          }
+
+          if (json.error === 'Script generated an unhandled synchronous exception.') {
+            var unhandledError = new Error(json.message);
+            unhandledError.stack = json.stack;
+            return callback(unhandledError, undefined, json.stdout, null);
+          }
+
+          if (json.error) {
+            // callback is called with an error
+            var parsed_error = typeof json.error === 'string' ? new Error(json.message || json.error) : json.error;
+            parsed_error.fromSandbox = true;
+            parsed_error.stack = json.stack;
+            return callback(parsed_error, undefined, json.stdout, null);
+          }
+
+          return callback(null, json.result, json.stdout, null);
+
         }
       }
-
-      var json = toJSON(body);
-      if (!json || typeof json !== 'object') {
-        return callback(new Error('Invalid response content from the auth0-sandbox: ' + body), undefined, [body], null);
-      }
-
-      if (json.message === 'Blocked event loop.') {
-        var timeout_error = new Error(params.timeout, undefined, json.stdout, null);
-        timeout_error.stack = json.stack;
-        return callback(timeout_error, undefined, json.stdout, null);
-      }
-
-      if (json.error === 'Script generated an unhandled synchronous exception.') {
-        var unhandledError = new Error(json.message);
-        unhandledError.stack = json.stack;
-        return callback(unhandledError, undefined, json.stdout, null);
-      }
-
-      if (json.error) {
-        // callback is called with an error
-        var parsed_error = typeof json.error === 'string' ? new Error(json.message || json.error) : json.error;
-        parsed_error.fromSandbox = true;
-        parsed_error.stack = json.stack;
-        return callback(parsed_error, undefined, json.stdout, null);
-      }
-
-      return callback(null, json.result, json.stdout, null);
-
-    });
+    );
   }
 }
 
