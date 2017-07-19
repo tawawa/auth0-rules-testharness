@@ -109,7 +109,7 @@ function runInSandbox(script, args, configuration, params) {
 
       if (json.error) {
         // callback is called with an error
-        var parsed_error = typeof json.error === 'string' ? new Error(json.message || json.error) : json.error;
+        var parsed_error = (typeof json.error === 'string') ? new Error(json.message || json.error) : json;
         parsed_error.fromSandbox = true;
         parsed_error.stack = json.stack;
         return callback(parsed_error, undefined, json.stdout, null);
