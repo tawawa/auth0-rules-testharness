@@ -9,10 +9,25 @@ var sandbox_function_template = (function () {
   /*
    require('auth0-authz-rules-api').extend(global);
    return function (ctx, cb) {
-   var console = _wrap_console();
-   var configuration = <%- JSON.stringify(model.configuration) %>;
-   var webtask = ctx;
-   (<%- model.script %>)(<%- model.args %>, _wrap_callback(cb, console));
+     var console = _wrap_console();
+     var configuration = <%- JSON.stringify(model.configuration) %>;
+     var webtask = ctx;
+
+     var resultAggregate = function(error, user, context) {
+       if (error) { return cb(error); }
+       return cb(error, { user: user, context: context});
+     };
+
+     (
+       function (usr, ctx, cb) {
+        var manipulator = function(error, user, context) {
+          if(error) { return cb(error); }
+          return cb(error, { user: usr, context: ctx });
+        };
+        
+        (<%- model.script %>)(usr, ctx, manipulator);
+      }
+     )(<%- model.args %>, _wrap_callback(cb, console));
    }
    */
 }).toString().match(/[^]*\/\*([^]*)\*\/\s*\}$/)[1];
