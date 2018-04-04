@@ -104,8 +104,9 @@ describe('auth0-rules-testharness', function () {
   it('should append attribute "foo" to user with value "bar" - available in result object', function (done) {
 
     var callback = function (err, result, output, stats) {
-      // console.log('result: ', result);
-      expect(result.foo).to.equal('bar');
+      // console.log('result.user: ', result.user);
+      // console.log('result.context: ', result.context);
+      expect(result.user.foo).to.equal('bar');
       done();
     };
 
