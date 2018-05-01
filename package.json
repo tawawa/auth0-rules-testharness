@@ -23,9 +23,9 @@
   "dependencies": {
     "assert": "^1.4.1",
     "cb": "^0.1.0",
-    "ejs": "^2.5.5",
+    "ejs": "^2.5.9",
     "request": "^2.79.0",
-    "winston": "^2.3.1"
+    "winston": "^2.4.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
