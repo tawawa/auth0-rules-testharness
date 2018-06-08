@@ -13,16 +13,11 @@ var sandbox_function_template = (function () {
      var configuration = <%- JSON.stringify(model.configuration) %>;
      var webtask = ctx;
 
-     var resultAggregate = function(error, user, context) {
-       if (error) { return cb(error); }
-       return cb(error, { user: user, context: context});
-     };
-
      (
        function (usr, ctx, cb) {
         var manipulator = function(error, user, context) {
           if(error) { return cb(error); }
-          return cb(error, { user: usr, context: ctx });
+          return cb(error, { user: user, context: ctx });
         };
         
         (<%- model.script %>)(usr, ctx, manipulator);
