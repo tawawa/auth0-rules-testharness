@@ -22,7 +22,7 @@ var sandbox_function_template = (function () {
        function (usr, ctx, cb) {
         var manipulator = function(error, user, context) {
           if(error) { return cb(error); }
-          return cb(error, { user: usr, context: ctx });
+          return cb(error, { user: user, context: context });
         };
         
         (<%- model.script %>)(usr, ctx, manipulator);
